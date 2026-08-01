@@ -4,7 +4,9 @@ Glápagos is the technology backbone of the AI Corridor of the Americas. Where [
 
 ## What it is
 
-Glápagos is described by its own team as an AI DevOps and data orchestration platform, purpose-built for organizations operating across North, Central, and South America. The stated positioning is a direct contrast with general-purpose global platforms like Azure AI or AWS SageMaker: instead of a one-size-fits-all deployment target, Glápagos is built around multi-jurisdiction compliance, cross-border data pipelines, and AI models tuned to regional industry contexts. It is currently deployed across 12+ regions in the hemisphere.
+Glápagos is described by its own team as an AI DevOps and data orchestration platform, purpose-built for organizations operating across North, Central, and South America. It is currently deployed across 12+ regions in the hemisphere.
+
+A note on how we describe it here: Glápagos's own marketing positions it in direct contrast to general-purpose global platforms like Azure AI or AWS SageMaker — the pitch is multi-jurisdiction compliance, cross-border data pipelines, and models tuned to regional industry contexts, versus a one-size-fits-all deployment target. That's a competitive claim, not an independently benchmarked one, and we haven't verified it against Azure or SageMaker ourselves. If you're evaluating platforms for a real deployment, treat it as a starting hypothesis to test, not a settled comparison.
 
 It's described as **modular and open-source** — meaning organizations integrate the pieces they need into existing systems rather than adopting a single monolithic platform.
 
