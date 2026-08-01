@@ -1,218 +1,68 @@
-# Glápagos Backend — Reference Stack
+# AI Corridor of the Americas
 
-> **The platform where your data stays and the Americas move.**  
-> A modular, provider-agnostic backend for federated data and agentic AI at production scale.
+**The regional AI development movement connecting talent, data, capital, and policy across the Western Hemisphere.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-7b75d9.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)
-[![OpenAPI](https://img.shields.io/badge/OpenAPI-2.0-green)](https://swagger.io)
-[![Built by Glápagos](https://img.shields.io/badge/Built%20by-Gl%C3%A1pagos-7b75d9)](https://www.glapagos.com)
-
-This repo contains the **annotated reference implementation** of the Glápagos backend stack — every layer documented, every config explained, production-hardened. Fork what you need. Star what you find useful.
-
-→ **Platform:** [glapagos.com/platform](https://www.glapagos.com/platform)  
-→ **Request access:** [glapagos.com](https://www.glapagos.com)
+Led by [GENIA Americas](https://github.com/GENIA-Americas) · Network: [RaceFor.AI](https://www.racefor.ai) · Platform: [Glápagos](https://www.glapagos.com)
 
 ---
 
-## Stack Overview
+## Why this exists
 
-```
-GENIA-AMERICAS / GLAPAGOS-BACKEND
-├── API Layer            REST 3.12 · RS256 JWT · OpenAPI 2.0 · Hierarchical Routing
-├── Real-Time Layer      WebSocket · ASGI · Pub/Sub Channel Layer · TLS 1.3 / HTTP2
-├── Agentic AI/ML Layer  LLM Inference · RAG Pipelines · Federated Training · Typed Schema Validation
-├── Federated Data Infra Object Storage · Columnar Analytics · NoSQL Document Store · RDBMS
-├── Security Layer       Argon2id · AES-256 Field Encryption · TOTP 2FA · CORS Policy
-└── Deployment           Containerised · WSGI + ASGI · Observability · Static Asset CDN
-```
+Most AI used across Latin America and the Caribbean today is built somewhere else, then shipped in. It works in a demo and underperforms in the field, because it was never trained on this hemisphere's languages, economies, or institutions.
 
-All layers are **independently deployable** and **provider-agnostic**. Swap cloud vendors, LLM providers, or storage backends without touching core logic.
+The AI Corridor of the Americas is an attempt to fix the actual cause, not the symptom. Not by asking permission to participate in the AI economy, but by building the infrastructure — talent, data, and policy — that lets this hemisphere author AI instead of just consuming it.
 
----
+This repository is the front door to that effort: the manifesto, the ecosystem map, and the working repositories behind it.
 
-## Layers
+## The three pillars
 
-### 1. API Layer
+**Talent that stays.** AI literacy starting in K-12, not bolted on as an elective. Tools built to make teachers and operators more capable, not to replace them. Rooted in the work of [Emerging Rule](https://www.geniaamericas.com) in AI-powered education.
 
-**REST 3.12 · RS256 JWT · OpenAPI 2.0 · Hierarchical Routing**
+**Data that reflects the region it comes from.** [Glápagos](https://www.glapagos.com) is the technology backbone: an AI DevOps platform purpose-built for multi-jurisdiction deployment across North, Central, and South America, so models are trained and governed with regional data and regional consent, not imported wholesale. See [`docs/PLATFORM.md`](docs/PLATFORM.md) for the platform breakdown — what it does, how it's structured, and where the code lives.
 
-FastAPI boilerplate with:
-- RS256 JWT auth (asymmetric keys, rotation-safe)
-- OpenAPI 2.0 spec generated automatically from route definitions
-- Hierarchical route scoping (`/v1/americas/{region}/...`)
-- Built-in request ID propagation for distributed tracing
+**Capital and policy that move together.** AI infrastructure only compounds when public and private investment move in the same direction. This work has included formal engagement with the U.S. Congress:
 
-```python
-# Typical route pattern
-@router.get("/{region}/data", dependencies=[Depends(verify_rs256_jwt)])
-async def get_regional_data(region: str, scope: TokenScope = Depends()):
-    ...
-```
+- [H.Res.649](https://www.congress.gov/bill/118th-congress/house-resolution/649) — 118th Congress (introduced August 8, 2023, Rep. Adriano Espaillat)
+- [H.Res.836](https://www.congress.gov/bill/119th-congress/house-resolution/836) — 119th Congress (reintroduced October 28, 2025, Rep. Adriano Espaillat)
 
-**Why RS256 over HS256?** Asymmetric signatures let downstream services verify tokens without sharing a secret. Critical for multi-cloud, multi-tenant deployments.
+Both call on the United States to champion a regional AI strategy across the Americas. Neither is enacted law — both are resolutions, referred to the House Committees on Foreign Affairs and on Science, Space, and Technology. That distinction matters and we say so plainly, here and everywhere else we talk about this work.
 
----
+## The network, in numbers
 
-### 2. Real-Time Layer
+- Active across **12+ regions**, built for **35 nations**
+- Technology backbone: **Glápagos**, an AI DevOps platform for multi-jurisdiction deployment
+- Partners and collaborators include SingularityNET, Seguritech, and Intermestic
+- Press coverage: El Heraldo de México, DPL News Colombia, and a sponsored feature with The Atlantic and Google on government AI adoption worldwide
 
-**WebSocket · ASGI · Pub/Sub Channel Layer · TLS 1.3 / HTTP2**
+*(Figures as published by RaceFor.AI / GENIA Americas. If you're citing this externally, verify current numbers at [racefor.ai](https://www.racefor.ai) — a live network's numbers move faster than any README can.)*
 
-Native WebSocket support via ASGI — no separate socket server required:
+## The ecosystem
 
-```python
-# Channel layer pattern
-async def connect(self):
-    await self.channel_layer.group_add(self.room_name, self.channel_name)
-    await self.accept()
-
-async def receive(self, text_data):
-    await self.channel_layer.group_send(self.room_name, {
-        "type": "broadcast.message",
-        "payload": json.loads(text_data)
-    })
-```
-
-- Pub/Sub backed by Redis or in-process for local dev
-- TLS 1.3 enforced in staging/prod environments
-- HTTP/2 multiplexing reduces connection overhead for high-frequency updates
-
----
-
-### 3. Agentic AI / ML Layer
-
-**LLM Inference · RAG Pipelines · Federated Training · Typed Schema Validation**
-
-Provider-agnostic LLM interface — swap OpenAI, Anthropic, Cohere, or local models without touching application code:
-
-```python
-class LLMProvider(Protocol):
-    async def complete(self, prompt: str, schema: BaseModel) -> BaseModel: ...
-
-class RAGPipeline:
-    def __init__(self, retriever: Retriever, llm: LLMProvider):
-        self.retriever = retriever
-        self.llm = llm
-
-    async def query(self, question: str, schema: BaseModel) -> BaseModel:
-        context = await self.retriever.fetch(question)
-        return await self.llm.complete(
-            prompt=build_prompt(question, context),
-            schema=schema
-        )
-```
-
-**Typed Schema Validation** — all LLM outputs validated against Pydantic schemas before they touch application logic. No unstructured strings leaking into your stack.
-
-**Federated Training hooks** — data never leaves its region. Model gradients aggregate across nodes; raw data stays sovereign.
-
----
-
-### 4. Federated Data Infrastructure
-
-**Object Storage · Columnar Analytics · NoSQL Document Store · RDBMS**
-
-Unified query abstraction over multiple backends:
-
-| Backend | Use Case | Default Provider |
-|---|---|---|
-| Object Storage | Files, blobs, model artifacts | S3-compatible (GCS / AWS / MinIO) |
-| Columnar Analytics | Time-series, event data, ML features | BigQuery / DuckDB local |
-| NoSQL Document Store | Flexible schemas, user profiles | Firestore / MongoDB |
-| RDBMS | Transactional data, FK relationships | PostgreSQL |
-
-Data sovereignty by design — route queries to the correct regional store via config, not code changes.
-
----
-
-### 5. Security Layer
-
-**Argon2id · AES-256 Field Encryption · TOTP 2FA · CORS Policy**
-
-```python
-# Field-level encryption — encrypt before write, decrypt on read
-class EncryptedField:
-    def __set__(self, obj, value):
-        obj.__dict__[self.name] = aes256_encrypt(value, key=current_key())
-
-    def __get__(self, obj, _):
-        return aes256_decrypt(obj.__dict__[self.name], key=current_key())
-
-class UserProfile(BaseModel):
-    email: str  # plaintext — used for lookups
-    tax_id: EncryptedField  # AES-256 at rest
-    phone: EncryptedField
-```
-
-- **Argon2id** for password hashing (memory-hard, side-channel resistant)
-- **AES-256** field-level encryption — encrypt individual columns, not whole databases
-- **TOTP 2FA** — RFC 6238 compliant, works with any authenticator app
-- **CORS Policy** — per-environment config, allowlist-based
-
----
-
-### 6. Deployment
-
-**Containerised · WSGI + ASGI · Observability · Static Asset CDN**
-
-```
-Local  →  docker compose up
-Staging  →  Cloud Run (preview URLs, ephemeral DBs)
-Prod  →  GKE / GCP (regional, auto-scaled, CDN-fronted)
-```
-
-Observability built in from day one:
-- Structured JSON logs (no print statements)
-- OpenTelemetry traces propagated across all layers
-- Health check endpoints (`/healthz`, `/readyz`) on every service
-- Prometheus metrics exposed at `/metrics`
-
----
-
-## Quick Start
-
-```bash
-git clone https://github.com/glapagos/glapagos-backend
-cd glapagos-backend
-cp .env.example .env          # fill in your secrets
-docker compose up             # all layers, local dev
-```
-
-Visit `http://localhost:8000/docs` for the interactive OpenAPI explorer.
-
----
-
-## Environment Matrix
-
-| Feature | Local | Staging | Prod |
+| Repository | What it is | Stack | License |
 |---|---|---|---|
-| TLS | Self-signed | Let's Encrypt | Managed cert |
-| Database | SQLite + DuckDB | Cloud SQL | Cloud SQL HA |
-| Object Storage | MinIO | GCS bucket | GCS multi-region |
-| LLM Provider | Ollama (local) | Anthropic API | Anthropic API |
-| Auth | Dev JWT (HS256) | RS256 | RS256 + rotation |
-| CDN | None | Cloud CDN (preview) | Cloud CDN (full) |
+| [`Glapagos-Backend`](https://github.com/GENIA-Americas/Glapagos-Backend) | Backend for the Glápagos AI DevOps platform | Python | MIT |
+| [`multimodal-ai-americas`](https://github.com/GENIA-Americas/multimodal-ai-americas) | Open research repository for federated, regionally-grounded AI development across the Western Hemisphere | — | Apache-2.0 |
+| [`ciudadania-backend`](https://github.com/GENIA-Americas/ciudadania-backend) | Server-side code for the CiudadanIA project | — | AGPL-3.0 |
 
----
+Sites:
+- [racefor.ai](https://www.racefor.ai) — the AI strategy and deployment network
+- [glapagos.com](https://www.glapagos.com) — the platform
+- [GENIA Americas on GitHub](https://github.com/GENIA-Americas)
+- [GENIA Americas on LinkedIn](https://www.linkedin.com/company/genia-americas/)
 
-## Why Glápagos?
+## How to get involved
 
-- **Data sovereignty first.** Built for the Americas — data residency requirements across 35+ countries informed every architectural decision.
-- **No lock-in.** Every external dependency is behind an interface. Swap providers in config.
-- **Production scale, not toy demos.** This stack runs real workloads. The reference implementation is what we actually deploy.
+Read [`docs/JOIN.md`](docs/JOIN.md) for the specific path for you — developers, educators, policymakers, investors, or press each have a direct route in, no introduction required.
 
----
+Considering a partnership, investment, or formal engagement? Start with [`docs/DUE_DILIGENCE.md`](docs/DUE_DILIGENCE.md) — it's built so you can verify every claim independently, on Congress.gov and GitHub, before you ever talk to us.
 
-## Contributing
+- **Policymakers and institutions** — see [`docs/POLICY.md`](docs/POLICY.md) for the legislative record.
+- **Developers and researchers** — start with [`docs/PLATFORM.md`](docs/PLATFORM.md) for the architecture overview, then [`multimodal-ai-americas`](https://github.com/GENIA-Americas/multimodal-ai-americas); it's the open research repo.
+- **Founders and investors** — see [`docs/ECOSYSTEM.md`](docs/ECOSYSTEM.md) for the full network map.
+- **Everyone else** — read [`docs/MANIFESTO.md`](docs/MANIFESTO.md). It's short.
 
-Issues and PRs welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-For larger discussions — new layer proposals, provider integrations, regional compliance questions — open a GitHub Discussion.
-
----
+Contact: [admin@genia.ai](mailto:admin@genia.ai) · Press: [prensa@genia.ai](mailto:prensa@genia.ai)
 
 ## License
 
-MIT. Use it, fork it, build on it.
-
-→ [glapagos.com/platform](https://www.glapagos.com/platform) · [Request Access](https://www.glapagos.com)
+Documentation in this repository is licensed under [CC BY 4.0](LICENSE). Code in the linked repositories carries its own license as noted in the table above — check each repo before reuse.
