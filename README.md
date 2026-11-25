@@ -29,7 +29,7 @@ Both call on the United States to champion a regional AI strategy across the Ame
 
 ## The network, in numbers
 
-- Active across **12+ regions**, built for **35 nations**
+- Active across **12+ regions** (figure not independently published; some engagements are confidential), built for **35 nations**
 - Technology backbone: **Glápagos**, an AI DevOps platform for multi-jurisdiction deployment
 - Partners and collaborators include SingularityNET, Seguritech, and Intermestic
 - Press coverage: El Heraldo de México, DPL News Colombia, and a sponsored feature with The Atlantic and Google on government AI adoption worldwide
