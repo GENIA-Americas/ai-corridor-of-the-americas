@@ -15,7 +15,7 @@ This document exists so a policymaker, investor, journalist, or potential partne
 
 ## Technical footprint (independently verifiable on GitHub)
 
-- [github.com/GENIA-Americas](https://github.com/GENIA-Americas) — organization with public commit history, issues, and pull requests across three active repositories
+- [github.com/GENIA-Americas](https://github.com/GENIA-Americas) — organization with public commit history, issues, and pull requests across several public repositories
 - [Glapagos-Backend](https://github.com/GENIA-Americas/Glapagos-Backend) — check the commit history and contributor graph directly rather than taking any activity claim on faith
 - [multimodal-ai-americas](https://github.com/GENIA-Americas/multimodal-ai-americas)
 - [ciudadania-backend](https://github.com/GENIA-Americas/ciudadania-backend)

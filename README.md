@@ -41,8 +41,10 @@ Both call on the United States to champion a regional AI strategy across the Ame
 | Repository | What it is | Stack | License |
 |---|---|---|---|
 | [`Glapagos-Backend`](https://github.com/GENIA-Americas/Glapagos-Backend) | Backend for the Glápagos AI DevOps platform | Python | MIT |
-| [`multimodal-ai-americas`](https://github.com/GENIA-Americas/multimodal-ai-americas) | Open research repository for federated, regionally-grounded AI development across the Western Hemisphere | — | Apache-2.0 |
+| [`multimodal-ai-americas`](https://github.com/GENIA-Americas/multimodal-ai-americas) | Open datasets, benchmarks, and research notes for AI in regional languages. Early stage. | Python | Apache-2.0 |
 | [`ciudadania-backend`](https://github.com/GENIA-Americas/ciudadania-backend) | Server-side code for the CiudadanIA project | — | AGPL-3.0 |
+| [AI Toolkit](https://github.com/GENIA-Americas) | Eight small tools for AI readiness, maturity, use cases, automation, project scoping, ROI, policy drafting, and prompts, listed on the organization profile | see each repository | see each repository |
+| [`governance`](https://github.com/GENIA-Americas/governance) | Policies for opening repositories, licensing defaults, and contributions | n/a | see repository |
 
 Sites:
 - [racefor.ai](https://www.racefor.ai) — the AI strategy and deployment network
